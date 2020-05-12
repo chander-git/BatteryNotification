@@ -6,6 +6,8 @@ bool isConnectedAudioPlayed;
 bool isLowAudioPlayed;
 bool isMediumAudioPlayed;
 bool isFullAudioPlayed;
+bool isCriticalAudioPlayed;
+
 string 	RemoveSpaces(char*);
 int playaudio(int *argc, char ***argv,string file_path,int vol);
 

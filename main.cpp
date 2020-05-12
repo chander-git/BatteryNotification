@@ -1,16 +1,55 @@
 #include"GetFromTerm.h"
 #include "declaration.h"
+#include "INIReader.h"
+
+INIReader Reader("Config.ini");
+
 void AlgrothimAndPlay(struct HardwareInfo info,int* argc,char*** argv)
 {
-	if(info.isAdapterConnected==true && isConnectedAudioPlayed==false)
-	{
-		playaudio(argc,argv,"file:///home/thread_login/Desktop/Audio/file.mp3/BTLOW.MP3",10);
+/////////////////////////For Adapter Connected ////////////////////////////////////////////
+
+	if(info.isAdapterConnected==true && isConnectedAudioPlayed==false){
+
+		playaudio(argc,argv, "file://"+Reader.Get("Apath","CHCONNECTED"," "),20);
 		isConnectedAudioPlayed=true;
-	}
-	if(info.isAdapterConnected==false && !isConnectedAudioPlayed==false)
-	{
-		playaudio(argc,argv,"file:///home/thread_login/Desktop/Audio/file.mp3/BTLOW.MP3",10);
+
+	}else if(info.isAdapterConnected==false && !isConnectedAudioPlayed==false){
+
+		playaudio(argc,argv,"file://"+Reader.Get("Apath","CHCONNECTED"," "),10);
 		isConnectedAudioPlayed=false;
+	}
+/////////////////////////For Percentage ////////////////////////////////////////////
+
+	if(info.BatteryPercentage == 100 && isFullAudioPlayed==false){
+
+		playaudio(argc,argv,"file://" + Reader.Get("Apath","BTFULL"," "),10);
+		isFullAudioPlayed=true;
+		isCriticalAudioPlayed=false;
+
+	}else if(info.BatteryPercentage >= 90 && info.BatteryPercentage <= 90 && isMediumAudioPlayed==false){
+
+//		playaudio(argc,argv,"file://"+Reader.Get("Apath","BTMEDIUM"," "),10);
+		isMediumAudioPlayed=true;
+		isFullAudioPlayed=false;
+		isCriticalAudioPlayed=false;
+
+
+	}else if(info.BatteryPercentage<=20 && info.BatteryPercentage >=11 && isLowAudioPlayed==false){
+
+		playaudio(argc,argv,"file://"+Reader.Get("Apath","BTLOW"," "),10);
+		isLowAudioPlayed=true;
+		isFullAudioPlayed=false;
+		isMediumAudioPlayed=false;
+		isCriticalAudioPlayed=false;
+
+
+	}else if(info.BatteryPercentage<=10 && isCriticalAudioPlayed==false && !info.isAdapterConnected){
+
+		playaudio(argc,argv,"file://"+Reader.Get("Apath","BTCRITICAL"," "),10);
+		isCriticalAudioPlayed=true;
+		isFullAudioPlayed=false;
+		isMediumAudioPlayed=false;
+		isLowAudioPlayed=false;
 	}
 	return ;
 }
@@ -40,10 +79,10 @@ int main (int argc,char** argv)
 	isMediumAudioPlayed=false;
 	isFullAudioPlayed=false;
 	while(1){
-	data=GetFromTerm("acpi");
-	PrintVector(data);
+		data=GetFromTerm("acpi");
+		PrintVector(data);
 
-	AlgrothimAndPlay(ParseString(const_cast<char*>(RemoveSpaces(const_cast<char*>(data.at(0).c_str())).c_str())),&argc,&argv);
+		AlgrothimAndPlay(ParseString(const_cast<char*>(RemoveSpaces(const_cast<char*>(data.at(0).c_str())).c_str())),&argc,&argv);
 		sleep(1);
 	}
 }
